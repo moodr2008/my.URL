@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>اختبار تكنولوجيا 12 - HTML</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --primary: #22c55e;
+      --primary-2: #16a34a;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #38bdf8;
+      --correct-bg: rgba(34,197,94,.16);
+      --wrong-bg: rgba(239,68,68,.16);
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 16px 40px rgba(0,0,0,.24);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+    body {
+      font-family: "Tahoma", "Arial", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(56,189,248,.13), transparent 26%),
+        radial-gradient(circle at top left, rgba(34,197,94,.11), transparent 24%),
+        linear-gradient(180deg, #020617 0%, #0b1120 100%);
+      color: var(--text);
+      line-height: 1.8;
+    }
+    .container {
+      width: min(1100px, calc(100% - 24px));
+      margin: 24px auto 60px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.12));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 5vw, 42px);
+    }
+    .hero p {
+      margin: 6px 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .badge {
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+      margin: 18px 0 24px;
+      background: rgba(15,23,42,.86);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+    .topbar-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+    .timer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .timer-box {
+      min-width: 150px;
+      text-align: center;
+      background: rgba(255,255,255,.08);
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      letter-spacing: 1px;
+    }
+    .timer-box.danger {
+      color: #fecaca;
+      background: rgba(239,68,68,.18);
+      border-color: rgba(239,68,68,.5);
+    }
+    .progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .progress {
+      height: 14px;
+      background: rgba(255,255,255,.08);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--info), var(--primary));
+      transition: width .35s ease;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      color: white;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,.09);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .question {
+      background: linear-gradient(180deg, rgba(17,24,39,.95), rgba(15,23,42,.95));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+    .question-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .q-no {
+      font-weight: bold;
+      color: #bbf7d0;
+      background: rgba(34,197,94,.12);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,197,94,.26);
+      font-size: 14px;
+    }
+    .q-type {
+      font-size: 13px;
+      color: var(--muted);
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 10px;
+    }
+    .q-text {
+      font-size: 22px;
+      margin: 8px 0 14px;
+      font-weight: bold;
+    }
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+    .option {
+      display: block;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: .2s ease;
+      user-select: none;
+    }
+    .option:hover {
+      background: rgba(255,255,255,.08);
+      transform: translateY(-1px);
+    }
+    .option input {
+      display: none;
+    }
+    .option.correct {
+      background: var(--correct-bg);
+      border-color: rgba(34,197,94,.55);
+    }
+    .option.wrong {
+      background: var(--wrong-bg);
+      border-color: rgba(239,68,68,.55);
+    }
+    .option.locked {
+      cursor: default;
+      opacity: .98;
+    }
+    .feedback {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      display: none;
+      border: 1px solid var(--border);
+      font-size: 15px;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct {
+      background: var(--correct-bg);
+      border-color: rgba(34,197,94,.42);
+    }
+    .feedback.wrong {
+      background: var(--wrong-bg);
+      border-color: rgba(239,68,68,.42);
+    }
+    .feedback strong {
+      display: inline-block;
+      margin-left: 8px;
+    }
+    .summary {
+      display: none;
+      margin-top: 26px;
+      background: linear-gradient(135deg, rgba(34,197,94,.16), rgba(56,189,248,.12));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .summary.show { display: block; }
+    .summary h2 {
+      margin-top: 0;
+      font-size: clamp(26px, 4vw, 36px);
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .stat {
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat .value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .stat .label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .footer-note {
+      text-align: center;
+      color: #94a3b8;
+      margin-top: 26px;
+      font-size: 14px;
+    }
+    @media (max-width: 860px) {
+      .topbar-grid, .summary-grid {
+        grid-template-columns: 1fr;
+      }
+      .q-text { font-size: 20px; }
+      .timer {
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>اختبار تكنولوجيا – الصف الثاني عشر</h1>
+      <p>اختبار HTML تفاعلي يفتح مباشرة من المتصفح، مبني بصياغة جديدة على موضوعات الملف المرفق: الشبكات، المواقع الإلكترونية، مواقع التواصل الاجتماعي، والمهن في العالم الافتراضي.</p>
+      <p>النمط: <strong>وزاري / صعب</strong> — التصحيح <strong>فوري</strong> — العلامة النهائية من <strong>40</strong>.</p>
+      <div class="badges">
+        <span class="badge">30 اختيار متعدد</span>
+        <span class="badge">10 صح / غلط</span>
+        <span class="badge">مؤقت 60 دقيقة</span>
+        <span class="badge">تغذية راجعة مباشرة</span>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" onclick="document.getElementById('questions').scrollIntoView({behavior:'smooth'})">ابدأ الاختبار</button>
+        <button class="btn-secondary" onclick="resetQuiz()">إعادة البدء</button>
+      </div>
+    </section>
+
+    <section class="topbar">
+      <div class="topbar-grid">
+        <div class="timer">
+          <span>الوقت المتبقي:</span>
+          <span id="timerBox" class="timer-box">60:00</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="answeredText">تمت الإجابة: 0 / 40</span>
+            <span id="scoreText">العلامة الحالية: 0 / 40</span>
+          </div>
+          <div class="progress"><span id="progressBar"></span></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" onclick="finishQuiz(false)">إنهاء الاختبار وإظهار النتيجة</button>
+        <button class="btn-secondary" onclick="scrollToResult()">الانتقال إلى النتيجة</button>
+      </div>
+    </section>
+
+    <main id="questions"></main>
+
+    <section id="summary" class="summary">
+      <h2>النتيجة النهائية</h2>
+      <p id="resultLine">—</p>
+      <div class="summary-grid">
+        <div class="stat">
+          <div class="value" id="finalScore">0</div>
+          <div class="label">العلامة من 40</div>
+        </div>
+        <div class="stat">
+          <div class="value" id="finalPercent">0%</div>
+          <div class="label">النسبة المئوية</div>
+        </div>
+        <div class="stat">
+          <div class="value" id="correctCount">0</div>
+          <div class="label">إجابات صحيحة</div>
+        </div>
+        <div class="stat">
+          <div class="value" id="wrongCount">0</div>
+          <div class="label">إجابات خاطئة / غير مجابة</div>
+        </div>
+      </div>
+      <p class="note" id="gradeNote"></p>
+      <div class="actions">
+        <button class="btn-primary" onclick="resetQuiz()">إعادة الاختبار من البداية</button>
+      </div>
+    </section>
+
+    <div class="footer-note">تم تجهيز هذا الاختبار بصياغة جديدة ليعمل محليًا داخل المتصفح دون الحاجة إلى أي إضافات.</div>
+  </div>
+
+  <script>
+    const questions = [{"type": "mcq", "q": "في أي طبقة يُسمّى تنسيق الرسالة «إطارًا (Frame)»؟", "options": ["الطبقة الفيزيائية", "طبقة ربط البيانات", "طبقة الشبكة", "طبقة النقل"], "answer": 1, "exp": "يسمى تنسيق الرسالة في الطبقة الثانية (طبقة ربط البيانات) إطارًا Frame."}, {"type": "mcq", "q": "ما الوظيفة الأساسية لبطاقة واجهة الشبكة NIC كما ورد في الدرس؟", "options": ["توزيع عناوين IP تلقائيًا", "ربط الحاسوب بالوسيط وعدم الإرسال قبل التأكد من خلوه من الإشارات", "توجيه الحزم بين الشبكات", "تحويل أسماء المواقع إلى أرقام"], "answer": 1, "exp": "بطاقة واجهة الشبكة تربط الحاسوب بالوسيط، ولا تُرسل البيانات إلا بعد التأكد من خلو الوسيط من الإشارات."}, {"type": "mcq", "q": "يتكوّن عنوان MAC من:", "options": ["32 بت ويُمثَّل عشريًا", "48 بت ويُمثَّل بالنظام السادس عشر", "64 بت ويُمثَّل ثنائيًا فقط", "128 بت ويُمثَّل بالنظام السادس عشر"], "answer": 1, "exp": "عنوان MAC يتكوّن من 48 بت، وتعرضه أنظمة التشغيل غالبًا بالنظام السادس عشر Hexadecimal."}, {"type": "mcq", "q": "لماذا يُعد عنوان MAC عنوانًا فيزيائيًا؟", "options": ["لأنه يتغير كلما تغيّرت الشبكة", "لأنه يُنشأ ماديًا على بطاقة الشبكة من قبل المُصنِّع", "لأنه يُعطى من خادم DHCP", "لأنه يُستخدم فقط على الإنترنت"], "answer": 1, "exp": "عنوان MAC يُنشأ فيزيائيًا على بطاقة الشبكة من قِبل المُصنِّع، ولذلك يُصنَّف عنوانًا فيزيائيًا."}, {"type": "mcq", "q": "يعتمد المحول Switch في تحويل الإطار إلى المنفذ المناسب على:", "options": ["عنوان MAC الهدف", "عنوان MAC المصدر فقط", "اسم الجهاز", "نوع الملف المرسل"], "answer": 0, "exp": "يستخدم المحول عنوان MAC الهدف الموجود في بداية الإطار لتحديد المنفذ المناسب."}, {"type": "mcq", "q": "كيف يعبّئ المحول Switch جدول عناوين MAC؟", "options": ["من عنوان IP المصدر", "من عنوان MAC المصدر وربطه بالمنفذ الذي وصلت منه الرسالة", "من عنوان MAC الهدف فقط", "من خلال DNS"], "answer": 1, "exp": "يتعرف المحول على عنوان MAC المصدر عند استلام أول رسالة، ثم يربطه برقم المنفذ الداخل منه الإطار."}, {"type": "mcq", "q": "ما فائدة الحقل FCS الموجود في ذيل الإطار؟", "options": ["تحديد نوع الموقع الإلكتروني", "تفحّص الأخطاء والتأكد من سلامة الإطار", "توزيع عناوين MAC", "تحديد مسار الحزمة عبر الموجهات"], "answer": 1, "exp": "يستخدم FCS للكشف عن الأخطاء الناتجة عن التشويش والتحقق من صلاحية الإطار."}, {"type": "mcq", "q": "يتكوّن عنوان IPv4 من:", "options": ["16 بت", "32 بت", "48 بت", "128 بت"], "answer": 1, "exp": "عنوان IPv4 يتكوّن من 32 بت مقسمة إلى أربع خانات، في كل خانة 8 بت."}, {"type": "mcq", "q": "في قناع الشبكة، ماذا تعني القيمة 255 عادةً؟", "options": ["الجزء الخاص بعنوان الجهاز", "الجزء الخاص بعنوان الشبكة", "بوابة الشبكة الافتراضية", "عنوان الخادم"], "answer": 1, "exp": "تُستخدم 255 في قناع الشبكة لتحديد الجزء الخاص بعنوان الشبكة، بينما يحدد الصفر الجزء الخاص بعنوان الجهاز."}, {"type": "mcq", "q": "إذا كان عنوان IP هو 192.168.20.1 وقناع الشبكة 255.255.0.0 فإن عنوان الشبكة هو:", "options": ["192.168", "192.168.20", "192.168.20.1", "255.255"], "answer": 0, "exp": "مع القناع 255.255.0.0 تكون أول خانتين للشبكة، أي 192.168."}, {"type": "mcq", "q": "إذا كان عنوان IP هو 192.168.20.1 وقناع الشبكة 255.255.255.0 فإن عنوان الشبكة هو:", "options": ["192.168", "192.168.20", "20.1", "192.168.20.1"], "answer": 1, "exp": "مع القناع 255.255.255.0 تكون أول ثلاث خانات للشبكة، أي 192.168.20."}, {"type": "mcq", "q": "كم عدد العناوين الممكنة في شبكة قناعها 255.255.255.0 وفق ما ورد في الكتاب؟", "options": ["128", "256", "65536", "16777216"], "answer": 1, "exp": "عندما يكون جزء الجهاز 8 بت فإن عدد العناوين يساوي 2^8 = 256 عنوانًا."}, {"type": "mcq", "q": "أي مما يأتي يعبّر عن التكوين التلقائي لعنوان IP؟", "options": ["ARP", "DHCP", "HTTP", "URL"], "answer": 1, "exp": "يُستخدم DHCP لإعطاء الأجهزة عناوين IP تلقائيًا."}, {"type": "mcq", "q": "أي الأجهزة الآتية يُفضّل لها التكوين اليدوي لعنوان IP؟", "options": ["جهاز يتصفح الإنترنت فقط", "طابعة شبكة تقدّم خدمة لبقية الأجهزة", "حاسوب طالب في المختبر", "هاتف متصل مؤقتًا بالشبكة"], "answer": 1, "exp": "الأجهزة التي تقدم خدمة على الشبكة، مثل طابعة الشبكة، تحتاج عنوانًا ثابتًا؛ لذا يناسبها التكوين اليدوي."}, {"type": "mcq", "q": "أي أمر يُستخدم لفحص الاتصال مع عنوان IP على الشبكة؟", "options": ["ipconfig", "ping", "tracert", "format"], "answer": 1, "exp": "أمر ping يُستخدم لاختبار الاتصال بعنوان IP معيّن."}, {"type": "mcq", "q": "أي أمر يُستخدم لمعرفة عدد الموجّهات التي تعبرها الرسالة حتى تصل إلى موقع ما؟", "options": ["ping", "ipconfig /all", "tracert", "dir"], "answer": 2, "exp": "أمر tracert يُظهر مسار الرسالة وعدد الموجهات (القفزات) حتى الوجهة."}, {"type": "mcq", "q": "يعتمد الموجه Router في اتخاذ قرار توجيه الحزمة على:", "options": ["عنوان MAC الهدف", "عنوان IP الهدف", "اسم المستخدم", "عنوان البريد الإلكتروني"], "answer": 1, "exp": "يتفحص الموجه عنوان IP الهدف في رأس الحزمة ليحدد إلى أي منفذ سيوجهها."}, {"type": "mcq", "q": "جهاز بعنوان 192.168.3.2 يريد الإرسال إلى 192.168.4.2 وكلاهما بقناع 255.255.255.0. النتيجة الصحيحة هي:", "options": ["الجهازان في الشبكة نفسها", "الجهازان يحتاجان إلى محول فقط", "الجهازان في شبكتين مختلفتين ويحتاجان إلى موجه", "لا يمكن الحكم دون معرفة عنوان MAC"], "answer": 2, "exp": "لأن أول ثلاث خانات تمثل الشبكة مع هذا القناع، وعنوانا الشبكة مختلفان: 192.168.3 و192.168.4."}, {"type": "mcq", "q": "عند إرسال رسالة من جهاز المدرسة إلى موقع خارجي مثل Google، يكون عنوان MAC الهدف في المرحلة الأولى هو:", "options": ["عنوان MAC موقع Google", "عنوان MAC الجهاز المرسل", "عنوان MAC الموجه في الشبكة المحلية", "لا يوجد عنوان MAC أصلًا"], "answer": 2, "exp": "في أول مرحلة يكون الهدف الفيزيائي هو المحطة التالية، أي الموجه المحلي، وليس الموقع البعيد."}, {"type": "mcq", "q": "يشبه الكتاب العنوان المنطقي IP في المثال الحياتي بـ:", "options": ["اسم الحي فقط", "العنوان الكامل للمقصود الوصول إليه", "رقم الحافلة", "لوحة السيارة"], "answer": 1, "exp": "شُبّه العنوان المنطقي بالعنوان الكامل للشخص المراد الوصول إليه، لأنه يحدد الوجهة النهائية."}, {"type": "mcq", "q": "ما التعريف الأدق للموقع الإلكتروني كما ورد في الدرس؟", "options": ["برنامج لمعالجة الصور", "مجموعة صفحات متصلة عبر وصلات تشعبية", "خادم لتخزين قواعد البيانات فقط", "مجلد داخل الحاسوب"], "answer": 1, "exp": "الموقع الإلكتروني هو مجموعة من الصفحات المتصلة معًا عبر Hyperlinks."}, {"type": "mcq", "q": "أي عنصر مما يأتي ليس من العناصر الرئيسة التي تكوّن هيكلية شبكة الإنترنت كما ورد في الكتاب؟", "options": ["الخوادم Servers", "الزبائن Clients", "الشركات المزودة للإنترنت", "الطابعات ثلاثية الأبعاد"], "answer": 3, "exp": "ذكر الكتاب الخوادم والزبائن والشركات المزودة ووسائل الاتصال السلكية واللاسلكية، ولم يذكر الطابعات ثلاثية الأبعاد."}, {"type": "mcq", "q": "الاختصار URL يعني:", "options": ["Uniform Resource Locator", "Universal Router Link", "User Resource Login", "Unified Relay Locator"], "answer": 0, "exp": "URL هو اختصار Uniform Resource Locator، أي محدد موقع الموارد الموحد."}, {"type": "mcq", "q": "في العنوان http://www.Pcdc.Edu.ps فإن المقطع Edu يدل على أن الموقع:", "options": ["تجاري", "حكومي", "تعليمي", "شبكي"], "answer": 2, "exp": "Edu هو الملحق الخاص بالمواقع التعليمية."}, {"type": "mcq", "q": "ما مهمة خادم DNS عند كتابة عنوان الموقع في المتصفح؟", "options": ["نقل الفيديو من الخادم إلى الزبون", "تحويل العنوان النصي إلى عنوان رقمي للخادم", "إنشاء صفحة الموقع", "ضغط الصور"], "answer": 1, "exp": "يقوم DNS بتحويل اسم الموقع المدخل إلى عنوان رقمي (IP) للخادم."}, {"type": "mcq", "q": "بعد نجاح الاتصال بين جهاز المستخدم والخادم، أي بروتوكول يبدأ بنقل الصفحة الرئيسة للموقع؟", "options": ["DHCP", "FTP", "HTTP", "ARP"], "answer": 2, "exp": "وفق الدرس، يبدأ بروتوكول HTTP بنقل الصفحة الرئيسة ومحتوياتها من الخادم إلى الزبون."}, {"type": "mcq", "q": "أي مما يأتي مثال على موقع تفاعلي (Dynamic Website)؟", "options": ["موقع شخصي ثابت لا يُحدّث إلا يدويًا", "موقع صحفي يتغير محتواه باستمرار", "صفحة تعريفية محفوظة دون تفاعل", "ملف HTML غير منشور"], "answer": 1, "exp": "المواقع الصحفية والتجارية والاجتماعية من أمثلة المواقع التفاعلية؛ لأن محتواها يتغير باستمرار."}, {"type": "mcq", "q": "أي موقع تواصل اجتماعي وصفه الكتاب بأنه شبكة اجتماعية مهنية متخصصة؟", "options": ["YouTube", "Facebook", "LinkedIn", "Twitter"], "answer": 2, "exp": "لينكد إن LinkedIn موقع متخصص في إبراز المهارات والخبرات المهنية."}, {"type": "mcq", "q": "أي من الآتي يُعد من الآثار الإيجابية لمواقع التواصل الاجتماعي؟", "options": ["ضعف العلاقات الاجتماعية الواقعية", "انتحال الشخصيات", "تطوير القدرات من خلال التواصل مع خبراء", "الإدمان والإفراط في الاستخدام"], "answer": 2, "exp": "من الآثار الإيجابية المذكورة: تطوير القدرات بالتواصل مع خبراء في المجالات الحياتية والمهنية."}, {"type": "mcq", "q": "أي مهنة من المهن الآتية تحتاج – وفق الدرس – إلى سرعة في إدخال البيانات ومهارة في برامج الإدخال؟", "options": ["إدخال البيانات", "صيانة الحاسوب والشبكات", "التجارة الإلكترونية", "مستشار الإنتاجية"], "answer": 0, "exp": "ذكر الكتاب أن إدخال البيانات يحتاج إلى مهارة في برامج الإدخال وسرعة في إدخال البيانات."}, {"type": "tf", "q": "يتغير عنوان MAC للجهاز نفسه كلما انتقل من شبكة إلى أخرى.", "answer": false, "exp": "يبقى عنوان MAC ثابتًا ما دام الجهاز يستخدم بطاقة الشبكة نفسها، ولا يتغير بتغير الشبكة المتصل بها."}, {"type": "tf", "q": "يعمل كل من الموجه Router والمحول Switch في الطبقة نفسها من نموذج OSI.", "answer": false, "exp": "المحول يعمل في الطبقة الثانية، بينما الموجه يعمل في الطبقة الثالثة."}, {"type": "tf", "q": "يبقى عنوانا IP المصدر والهدف ثابتين عبر مسار الرسالة، بينما تتغير عناوين MAC من موجه إلى آخر.", "answer": true, "exp": "العنوان المنطقي IP يحدد الوجهة النهائية ويبقى ثابتًا، أما العنوان الفيزيائي MAC فيتغير بين كل مرحلة وأخرى."}, {"type": "tf", "q": "يقوم DNS بتخزين مقاطع الفيديو التعليمية وعرضها للمستخدم.", "answer": false, "exp": "DNS لا يخزن الفيديو؛ مهمته تحويل اسم الموقع إلى عنوان رقمي للخادم."}, {"type": "tf", "q": "المواقع الساكنة عادةً بسيطة التصميم، ولا يمكن تعديلها إلا من قبل مصممها.", "answer": true, "exp": "هذا هو الوصف الذي أورده الكتاب للمواقع الساكنة."}, {"type": "tf", "q": "من ميزات مواقع التواصل الاجتماعي أنها تساعد في تخطي الحدود المتمثلة باللغة والثقافة والمكان والزمان.", "answer": true, "exp": "ذكر الدرس هذه الميزة ضمن أبرز مزايا مواقع التواصل الاجتماعي."}, {"type": "tf", "q": "نشر صور العائلة عُدّ في أسئلة الوحدة مثالًا على ممارسة غير آمنة عند استخدام مواقع التواصل الاجتماعي.", "answer": true, "exp": "ورد ذلك ضمن سؤال اختيار من متعدد حول الممارسات غير الآمنة."}, {"type": "tf", "q": "تُعد صيانة الحاسوب والشبكات من المهن الممكن ممارستها في العالم الافتراضي.", "answer": true, "exp": "ذكر الكتاب صيانة الحاسوب والشبكات ضمن المهن التي يمكن مزاولتها عبر العالم الافتراضي."}, {"type": "tf", "q": "إذا كان قناع الشبكة 255.255.0.0 فإن عدد العناوين الممكنة في الشبكة – وفق الكتاب – يساوي 65536 عنوانًا.", "answer": true, "exp": "عندما يكون جزء الجهاز 16 بت فإن عدد العناوين يساوي 2^16 = 65536."}, {"type": "tf", "q": "التكوين التلقائي لعنوان IP هو الخيار الأنسب دائمًا لطابعات الشبكة التي تقدم خدمة لبقية الأجهزة.", "answer": false, "exp": "الطابعات الشبكية تحتاج غالبًا إلى عنوان ثابت، لذلك يكون التكوين اليدوي أنسب لها."}];
+    const state = {
+      answers: Array(questions.length).fill(null),
+      locked: Array(questions.length).fill(false),
+      score: 0,
+      finished: false,
+      secondsLeft: 60 * 60
+    };
+
+    const questionsEl = document.getElementById("questions");
+    const progressBar = document.getElementById("progressBar");
+    const answeredText = document.getElementById("answeredText");
+    const scoreText = document.getElementById("scoreText");
+    const timerBox = document.getElementById("timerBox");
+
+    function renderQuiz() {
+      questionsEl.innerHTML = "";
+      questions.forEach((q, index) => {
+        const typeLabel = q.type === "mcq" ? "اختيار متعدد" : "صح / غلط";
+        const opts = q.type === "mcq"
+          ? q.options
+          : ["صح", "غلط"];
+
+        const card = document.createElement("section");
+        card.className = "question";
+        card.id = `q-${index}`;
+
+        card.innerHTML = `
+          <div class="question-head">
+            <span class="q-no">السؤال ${index + 1} / ${questions.length}</span>
+            <span class="q-type">${typeLabel}</span>
+          </div>
+          <div class="q-text">${q.q}</div>
+          <div class="options">
+            ${opts.map((opt, optIndex) => `
+              <label class="option" data-q="${index}" data-opt="${optIndex}">
+                <input type="radio" name="question-${index}" />
+                <span>${String.fromCharCode(1633 + optIndex)}) ${opt}</span>
+              </label>
+            `).join("")}
+          </div>
+          <div class="feedback" id="feedback-${index}"></div>
+        `;
+        questionsEl.appendChild(card);
+      });
+
+      document.querySelectorAll(".option").forEach(el => {
+        el.addEventListener("click", () => {
+          if (state.finished) return;
+          const qIndex = Number(el.dataset.q);
+          const optIndex = Number(el.dataset.opt);
+          answerQuestion(qIndex, optIndex);
+        });
+      });
+
+      updateStats();
+    }
+
+    function answerQuestion(qIndex, chosen) {
+      if (state.locked[qIndex]) return;
+
+      const q = questions[qIndex];
+      const options = document.querySelectorAll(`#q-${qIndex} .option`);
+      const feedback = document.getElementById(`feedback-${qIndex}`);
+
+      let isCorrect = false;
+      if (q.type === "mcq") {
+        isCorrect = chosen === q.answer;
+      } else {
+        const chosenBool = chosen === 0;
+        isCorrect = chosenBool === q.answer;
+      }
+
+      state.answers[qIndex] = chosen;
+      state.locked[qIndex] = true;
+      if (isCorrect) state.score += 1;
+
+      options.forEach((optEl, idx) => {
+        optEl.classList.add("locked");
+        if (q.type === "mcq") {
+          if (idx === q.answer) optEl.classList.add("correct");
+          if (idx === chosen && !isCorrect) optEl.classList.add("wrong");
+        } else {
+          const correctIndex = q.answer ? 0 : 1;
+          if (idx === correctIndex) optEl.classList.add("correct");
+          if (idx === chosen && !isCorrect) optEl.classList.add("wrong");
+        }
+      });
+
+      const correctText = q.type === "mcq"
+        ? q.options[q.answer]
+        : (q.answer ? "صح" : "غلط");
+
+      feedback.className = `feedback show ${isCorrect ? "correct" : "wrong"}`;
+      feedback.innerHTML = `
+        <strong>${isCorrect ? "إجابة صحيحة" : "إجابة غير صحيحة"}</strong>
+        <div>الإجابة الصحيحة: <strong>${correctText}</strong></div>
+        <div>${q.exp}</div>
+      `;
+
+      updateStats();
+
+      const answeredCount = state.answers.filter(a => a !== null).length;
+      if (answeredCount === questions.length) {
+        finishQuiz(false);
+      }
+    }
+
+    function updateStats() {
+      const answeredCount = state.answers.filter(a => a !== null).length;
+      answeredText.textContent = `تمت الإجابة: ${answeredCount} / ${questions.length}`;
+      scoreText.textContent = `العلامة الحالية: ${state.score} / ${questions.length}`;
+      progressBar.style.width = `${(answeredCount / questions.length) * 100}%`;
+    }
+
+    function formatTime(totalSeconds) {
+      const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const secs = String(totalSeconds % 60).padStart(2, "0");
+      return `${mins}:${secs}`;
+    }
+
+    function startTimer() {
+      timerBox.textContent = formatTime(state.secondsLeft);
+      const interval = setInterval(() => {
+        if (state.finished) {
+          clearInterval(interval);
+          return;
+        }
+        state.secondsLeft -= 1;
+        timerBox.textContent = formatTime(state.secondsLeft);
+
+        if (state.secondsLeft <= 300) {
+          timerBox.classList.add("danger");
+        }
+
+        if (state.secondsLeft <= 0) {
+          clearInterval(interval);
+          finishQuiz(true);
+        }
+      }, 1000);
+    }
+
+    function finishQuiz(autoSubmitted) {
+      if (state.finished) return;
+      state.finished = true;
+
+      const answeredCount = state.answers.filter(a => a !== null).length;
+      const wrongOrBlank = questions.length - state.score;
+      const percent = Math.round((state.score / questions.length) * 100);
+
+      document.getElementById("summary").classList.add("show");
+      document.getElementById("finalScore").textContent = state.score;
+      document.getElementById("finalPercent").textContent = percent + "%";
+      document.getElementById("correctCount").textContent = state.score;
+      document.getElementById("wrongCount").textContent = wrongOrBlank;
+
+      let appreciation = "بحاجة إلى مراجعة أعمق.";
+      if (percent >= 90) appreciation = "ممتاز جدًا – مستوى وزاري قوي.";
+      else if (percent >= 75) appreciation = "جيد جدًا – أداء قوي.";
+      else if (percent >= 60) appreciation = "جيد – لكن ما زالت هناك نقاط تحتاج تثبيتًا.";
+      else if (percent >= 50) appreciation = "مقبول – راجع الدروس الأساسية والأسئلة التطبيقية.";
+
+      document.getElementById("resultLine").textContent =
+        autoSubmitted
+          ? `انتهى الوقت تلقائيًا. أجبت عن ${answeredCount} من أصل ${questions.length} سؤالًا.`
+          : `تم إنهاء الاختبار. أجبت عن ${answeredCount} من أصل ${questions.length} سؤالًا.`;
+
+      document.getElementById("gradeNote").textContent = appreciation;
+      scrollToResult();
+
+      document.querySelectorAll(".option").forEach(el => {
+        el.style.pointerEvents = "none";
+      });
+    }
+
+    function scrollToResult() {
+      document.getElementById("summary").scrollIntoView({behavior: "smooth", block: "start"});
+    }
+
+    function resetQuiz() {
+      location.reload();
+    }
+
+    renderQuiz();
+    startTimer();
+  </script>
+</body>
+</html>
