@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>اختبار الدراسات التاريخية - الوحدة الأولى</title>
+  <style>
+    :root{
+      --bg:#f5f7fb; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+      --primary:#0f766e; --primary2:#14b8a6; --good:#15803d; --bad:#b91c1c;
+      --border:#dbe4ee; --soft:#eef6ff; --warn:#a16207;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Tahoma","Arial",sans-serif;background:linear-gradient(180deg,#eef6ff,#f8fafc 40%,#f5f7fb);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:18px}
+    .hero,.card,.question{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+    .hero{padding:20px;margin-bottom:16px}
+    h1{margin:0 0 8px;font-size:28px}
+    .sub{color:var(--muted);line-height:1.9}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+    .pill{background:var(--soft);border:1px solid #cfe3ff;border-radius:12px;padding:10px 12px;font-size:14px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:14px 0}
+    .btn{border:none;border-radius:12px;padding:12px 16px;font-size:15px;cursor:pointer;font-weight:700}
+    .btn.primary{background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff}
+    .btn.secondary{background:#fff;border:1px solid var(--border);color:var(--text)}
+    .btn:disabled{opacity:.65;cursor:not-allowed}
+    .scoreboard{display:flex;gap:10px;flex-wrap:wrap}
+    .card{padding:12px 14px}
+    .question{padding:16px;margin:14px 0}
+    .qhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+    .qnum{min-width:42px;height:42px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--soft);color:var(--primary);font-weight:700;border:1px solid #cfe3ff}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0}
+    .tag{font-size:12px;background:#f8fafc;border:1px solid var(--border);border-radius:999px;padding:4px 8px;color:var(--muted)}
+    .qtext{font-size:18px;line-height:1.9;margin:0}
+    .options{display:grid;gap:10px;margin-top:14px}
+    .option{border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:.15s;background:#fff}
+    .option:hover{border-color:#93c5fd;background:#f8fbff}
+    .option input{margin-top:4px;transform:scale(1.1)}
+    .option.correct{border-color:#86efac;background:#f0fdf4}
+    .option.wrong{border-color:#fecaca;background:#fef2f2}
+    .feedback{margin-top:12px;padding:10px 12px;border-radius:12px;font-size:14px;display:none;line-height:1.8}
+    .feedback.good{display:block;background:#f0fdf4;color:var(--good);border:1px solid #bbf7d0}
+    .feedback.bad{display:block;background:#fef2f2;color:var(--bad);border:1px solid #fecaca}
+    .finish{position:sticky;bottom:10px;z-index:20;background:rgba(245,247,251,.92);backdrop-filter: blur(8px);padding:10px;border-radius:16px;border:1px solid var(--border);margin-top:16px}
+    .result{display:none;margin-top:18px;padding:18px;border-radius:18px;background:#fff;border:1px solid var(--border)}
+    .result.show{display:block}
+    .big{font-size:30px;font-weight:800;margin:8px 0}
+    .small{color:var(--muted)}
+    .note{margin-top:10px;color:var(--warn);font-size:14px}
+    .footer{margin:24px 0 6px;color:var(--muted);font-size:13px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>اختبار الدراسات التاريخية - الوحدة الأولى</h1>
+      <div class="sub">اختبار شامل ومهم من جميع دروس الوحدة الأولى بنمط قريب من الوزاري. يتم اختيار <strong>40 سؤالاً</strong> عشوائياً في كل مرة تفتح فيها الصفحة: <strong>35 اختيار متعدد</strong> و<strong>5 صح/خطأ</strong>. يوجد تصحيح فوري لكل سؤال وعلامة نهائية عند الإنهاء.</div>
+      <div class="grid">
+        <div class="pill">الوحدة الأولى كاملة</div>
+        <div class="pill">35 اختيار متعدد</div>
+        <div class="pill">5 صح / خطأ</div>
+        <div class="pill">يتغيّر كلما أعدت فتح الصفحة</div>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <div class="scoreboard">
+        <div class="card">الأسئلة المجاب عنها: <strong id="answered">0</strong> / 40</div>
+        <div class="card">الإجابات الصحيحة: <strong id="correctCount">0</strong></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn secondary" id="newExamBtn">اختبار جديد</button>
+        <button class="btn primary" id="finishBtn">إنهاء الاختبار</button>
+      </div>
+    </div>
+
+    <main id="quiz"></main>
+
+    <div class="finish">
+      <div class="small">بعد الإجابة عن جميع الأسئلة اضغط «إنهاء الاختبار» لعرض العلامة النهائية والتقدير.</div>
+    </div>
+
+    <section id="result" class="result"></section>
+
+    <div class="footer">تم إعداد الأسئلة اعتماداً على ملف الدراسات التاريخية المرفق للوحدة الأولى.</div>
+  </div>
+
+<script>
+const mcqBank = [
+  // الدرس الأول
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'ما المقصود بالحرب كما ورد في الدرس؟', options:['حالة سلام بين طرفين','صراع بين طرفين يستخدم كل طرف أسلحته المادية وغير المادية لتحقيق أهدافه','نزاع اقتصادي فقط','مواجهة فكرية بلا أسلحة'], answer:1, explanation:'الحرب هي صراع بين طرفين يستخدم كل طرف أسلحته المادية وغير المادية لتحقيق أهدافه.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أيّ الدوافع الآتية عُدّت من أبرز دوافع الحروب؟', options:['الاقتصادية والثقافية والدينية والسياسية','الرياضية فقط','الطقسية فقط','الفنية فقط'], answer:0, explanation:'النص ذكر الدوافع الاقتصادية والثقافية والدينية والسياسية.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'ما الحرب التي تقوم فكرتها على إيقاع أكبر قدر ممكن من الخسائر بالعدو وتمتاز بطول المدة؟', options:['الحرب الباردة','حرب العصابات','حرب الاستنزاف','الحرب الأهلية'], answer:2, explanation:'هذا تعريف حرب الاستنزاف.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'ما الحرب التي تعتمد على الهجوم المفاجئ والاختفاء (الكر والفر)؟', options:['الحرب الشاملة','حرب العصابات','الحرب النفسية','الحرب الباردة'], answer:1, explanation:'هذا من أبرز سمات حرب العصابات.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أي نوع من الحروب يشترك فيه عدد كبير من دول العالم ويستخدم فيه كل أنواع الأسلحة؟', options:['الحرب الشاملة','الحرب الأهلية','حرب العصابات','الحرب النفسية'], answer:0, explanation:'الحرب الشاملة يشترك فيها عدد كبير من دول العالم.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'الحرب التي تدور بين أبناء الشعب الواحد تُسمى:', options:['الحرب الباردة','الحرب النفسية','الحرب الأهلية','حرب الاستنزاف'], answer:2, explanation:'هذا هو تعريف الحرب الأهلية.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'الحرب الباردة هي:', options:['صدام عسكري مباشر بالأسلحة الثقيلة','صراع بين طرفين يستخدمان وسائل كثيرة دون الصدام العسكري المباشر','حرب أهلية بين أبناء الوطن الواحد','حرب دينية مقدسة'], answer:1, explanation:'الحرب الباردة صراع دون صدام عسكري مباشر.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'ما الحرب التي تهدف إلى تغيير أنماط السلوك وتشكيك الناس بقيمهم ومبادئهم؟', options:['الحرب النفسية','الحرب الباردة','الحرب الشاملة','الحرب الأهلية'], answer:0, explanation:'هذا تعريف الحرب النفسية.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أيّ مثال ورد في الكتاب على حرب الاستنزاف؟', options:['الحرب اللبنانية 1975م','الحرب بين مصر والكيان الصهيوني 1967-1970م','الحرب الباردة 1947-1991م','معركة حطين'], answer:1, explanation:'وردت حرب الاستنزاف التي شنتها مصر خلال 1967-1970م.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أيّ مثال ورد على حرب العصابات؟', options:['المقاومة المغربية بقيادة عبد الكريم الخطابي','الحرب العالمية الأولى','الحرب الأهلية اللبنانية','معركة القادسية'], answer:0, explanation:'وردت المقاومة المغربية والمقاومة الفيتنامية أمثلة على حرب العصابات.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أيّ العوامل الآتية يحدد نوع الحرب؟', options:['لون علم الدولة فقط','أرض المعركة وتطوراتها والمرحلة الزمنية والأهداف والأسلحة','عدد السكان فقط','نوع المحاصيل الزراعية'], answer:1, explanation:'الدرس نصّ على هذه العوامل مجتمعة.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أيّ قانون ينظم سلوك المتحاربين في الحروب؟', options:['ميثاق هيئة الأمم المتحدة','القانون الإنساني الدولي','الإعلان العالمي لحقوق الإنسان','القانون التجاري'], answer:1, explanation:'القانون الإنساني الدولي هو الذي ينظم سلوك المتحاربين.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'معركة سولفرينو عام 1859م تُعد بداية:', options:['الفتوحات الإسلامية','المحاولات الأوروبية لوضع قوانين الحرب في العصر الحديث','الحرب الباردة','الحروب الفرنجية'], answer:1, explanation:'الكتاب ذكر أنها بداية المحاولات الأوروبية لوضع قوانين الحرب.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أيّ مبدأ من مبادئ القانون الإنساني الدولي يعني حماية كرامة الإنسان في جميع الأحوال؟', options:['التمييز','الإنسانية','الضرورة العسكرية','التناسب'], answer:1, explanation:'الإنسانية تعني حماية كرامة الإنسان حتى وقت الحرب.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'mcq', q:'أيّ مبدأ ينص على التمييز بين المدنيين والعسكريين وتوجيه العمليات ضد الأهداف العسكرية فقط؟', options:['التمييز','الإنسانية','التناسب','الردع'], answer:0, explanation:'هذا هو مبدأ التمييز.'},
+
+  // الدرس الثاني
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'يقصد بالفتوحات الإسلامية اصطلاحاً:', options:['رحلات تجارية خارج الجزيرة العربية','سلسلة الحروب والمعارك الجهادية بعد وفاة الرسول خارج الجزيرة العربية لنشر الإسلام وتحرير الناس','استعماراً اقتصادياً للعالم القديم','حروباً أهلية بين المسلمين'], answer:1, explanation:'هذا هو التعريف الاصطلاحي الوارد في الكتاب.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'بدأت الفتوحات الإسلامية بعد وفاة الرسول عام:', options:['1هـ / 622م','11هـ / 632م','13هـ / 634م','21هـ / 642م'], answer:1, explanation:'ورد في النص: بعد وفاة الرسول عام 11هـ/632م.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'سارت الفتوحات الإسلامية بشكل عام في:', options:['اتجاهين','ثلاثة اتجاهات','أربعة اتجاهات','اتجاه واحد'], answer:1, explanation:'اتجهت إلى الشام، والعراق وفارس، ومصر وشمال إفريقيا والأندلس.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'امتدت الفتوحات الإسلامية في ثلاث قارات هي:', options:['آسيا وإفريقيا وأوروبا','آسيا وأمريكا وأوروبا','إفريقيا وأمريكا الجنوبية وأوروبا','أستراليا وآسيا وإفريقيا'], answer:0, explanation:'هذا نص الدرس.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'ما أول معركة خاضها المسلمون في فلسطين في فتوحات الشام؟', options:['أجنادين','اليرموك','داثن','بصرى'], answer:2, explanation:'ورد أن أول معركة في فلسطين كانت داثن قرب غزة.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'المعركة التي قضت على القوة الرئيسة للبيزنطيين هي:', options:['القادسية','اليرموك','نهاوند','وادي لكة'], answer:1, explanation:'انتصار اليرموك قضى على القوة الرئيسة للبيزنطيين.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'من قائد الجيش الإسلامي في معركة اليرموك كما ورد في الدرس؟', options:['عمرو بن العاص','خالد بن الوليد','سعد بن أبي وقاص','طارق بن زياد'], answer:1, explanation:'تولى خالد بن الوليد قيادة الجيش الإسلامي في اليرموك.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'أيّ معركة كادت توقف حركة الفتح في العراق بسبب استخدام الفرس للفيلة والسهام؟', options:['القادسية','نهاوند','الجسر','عين التمر'], answer:2, explanation:'الهزيمة في معركة الجسر كانت فادحة.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'القائد الذي خاض معركة القادسية سنة 15هـ/636م هو:', options:['سعد بن أبي وقاص','خالد بن الوليد','أبو عبيد الثقفي','عماد الدين زنكي'], answer:0, explanation:'أرسله عمر بن الخطاب قائداً جديداً.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'المعركة الحاسمة في فتوحات فارس هي:', options:['الجسر','القادسية','نهاوند','أجنادين'], answer:2, explanation:'وردت نهاوند على أنها اللقاء الحاسم.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'فتح عمرو بن العاص مصر بعد فتحه:', options:['بلبيس وحصن بابليون','دمياط وطنطا','الإسكندرية فقط','طرابلس والقيروان'], answer:0, explanation:'ورد أنه فتح بلبيس وحصن بابليون ثم دانت له مصر.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'عُدَّ فتح مصر أسرع الفتوحات وأسهلها بسبب:', options:['عدم وجود سكان فيها','موقف الأقباط الكارهين للحكم البيزنطي ومعرفة عمرو بطبيعة البلاد','امتلاك المسلمين أسطولاً بحرياً ضخماً','هجرة الرومان منها قبل الفتح'], answer:1, explanation:'هذا نص الكتاب.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'المدينة التي أسسها عقبة بن نافع لتكون مركزاً لانطلاق الجيوش الإسلامية هي:', options:['الفسطاط','تونس','القيروان','الكوفة'], answer:2, explanation:'القيروان من أبرز منجزات مرحلة الفتح والاستقرار.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'من القائد الذي نزل الأندلس سنة 92هـ/711م قرب جبل طارق؟', options:['موسى بن نصير','طارق بن زياد','عمرو بن العاص','عبد الرحمن الغافقي'], answer:1, explanation:'طارق بن زياد هو الذي نزل الأندلس.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'انتصر المسلمون على لذريق في معركة:', options:['بلاط الشهداء','وادي لكة','القادسية','اليرموك'], answer:1, explanation:'هذا من أشهر أحداث فتح الأندلس.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'المعركة التي أوقفت الفتوحات الإسلامية في أوروبا عام 114هـ/732م هي:', options:['حطين','بلاط الشهداء','اليرموك','أجنادين'], answer:1, explanation:'بواتييه/بلاط الشهداء أوقفت التقدم في أوروبا.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'من أبرز نتائج معركة بلاط الشهداء:', options:['تحرير القدس','رسم الحد الفاصل بين الدولة الإسلامية وأوروبا','فتح القسطنطينية','القضاء على الدولة الفارسية'], answer:1, explanation:'ومن نتائجها أيضاً تقليص النفوذ الإسلامي في شمال إسبانيا.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'أيّ مدينة من المدن الآتية أنشأها المسلمون في العراق؟', options:['القيروان','الفسطاط','الكوفة','أنطاكية'], answer:2, explanation:'الكوفة والبصرة من المدن التي أنشأها المسلمون.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'من نتائج الفتوحات الإسلامية أنها:', options:['قضت على الدولة الفارسية وقلصت نفوذ البيزنطيين','أنهت كل الحضارات السابقة','منعت التفاعل الثقافي','أوقفت الهجرات العربية'], answer:0, explanation:'هذا من أبرز النتائج الواردة في الدرس.'},
+  {lesson:'الفتوحات الإسلامية', type:'mcq', q:'أيّ مدينة ارتبطت بفتح مصر وأنشأها المسلمون فيها؟', options:['الفسطاط','بغداد','القيروان','القدس'], answer:0, explanation:'الفسطاط من المدن التي أنشأها المسلمون.'},
+
+  // الدرس الثالث
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'الحروب الفرنجية هي:', options:['صراع بين المسلمين والفرس فقط','سلسلة طويلة من الحملات العسكرية شنها الغرب الأوروبي باتجاه الشرق الإسلامي بين 1095-1291م','نزاع داخلي أوروبي فقط','حروب تجارية بحرية فقط'], answer:1, explanation:'هذا هو التعريف الوارد في الكتاب.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'اشتهر من الحروب الفرنجية:', options:['خمس حملات فقط','ثماني حملات','حملتان فقط','اثنتا عشرة حملة'], answer:1, explanation:'ورد في النص أنها ثماني حملات.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'في الغرب سميت الحروب الفرنجية لاحقاً باسم:', options:['الحروب التحريرية','الحروب الصليبية','حروب المتوسط','حروب القلاع'], answer:1, explanation:'تطور المصطلح في الغرب إلى الحروب الصليبية.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'من دوافع الحروب الفرنجية:', options:['الرغبة في ضم المقدسات المسيحية وتأمين طرق الحج والسيطرة على التجارة','فقط اكتشاف طرق جديدة للزراعة','فقط التوسع العلمي','فقط زيادة السكان في أوروبا'], answer:0, explanation:'الكتاب جمع بين دوافع دينية واقتصادية وسياسية.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'الحملة الأولى عُرفت في مرحلتها الأولى باسم:', options:['حملة الملوك','حملة الفقراء أو الحملة الشعبية','حملة الفرسان','حملة التجار'], answer:1, explanation:'وقادها بطرس الناسك ووالتر المفلس.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'فشلت حملة بطرس الناسك بسبب:', options:['افتقارها إلى التسليح الجيد والفوضى وغياب القيادة الموحدة','عدم وجود طريق إلى الشرق','معاهدة صلح مفاجئة','مساندة المسلمين لها'], answer:0, explanation:'هذه أسباب الفشل كما وردت في الدرس.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'في أي عام احتل الفرنجة القدس؟', options:['1095م','1098م','1099م','1187م'], answer:2, explanation:'احتلت القدس سنة 1099م.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'أول إمارة استعادها المسلمون من الفرنجة هي:', options:['القدس','الرها','عكا','عسقلان'], answer:1, explanation:'استعادها عماد الدين زنكي سنة 1144م.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'إرسال الحملة الفرنجية الثانية عام 1147م كان بسبب:', options:['سقوط الرها','تحرير القدس','انتصار الفرنجة في مصر','سقوط عكا'], answer:0, explanation:'سقوط الرها كان سبب إرسال الحملة الثانية.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'معركة حطين وقعت عام:', options:['1099م','1147م','1187م','1291م'], answer:2, explanation:'وقعت قرب طبريا سنة 1187م.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'من نتائج معركة حطين:', options:['تحرير بيت المقدس وعكا','احتلال المسلمين للقسطنطينية','استعادة الفرنجة للرها','إنهاء الحروب الفرنجية فوراً'], answer:0, explanation:'كما أفرغت الإمارات الفرنجية من المقاتلين.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'الصلح الذي أنهى الحملة الفرنجية الثالثة هو:', options:['صلح القدس','صلح الرملة','اتفاقية يافا','صلح صور'], answer:1, explanation:'تم سنة 1192م بين صلاح الدين وريتشارد.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'من بنود صلح الرملة:', options:['بقاء المنطقة الساحلية من صور إلى يافا بأيدي الفرنجة','تسليم القدس نهائياً للفرنجة','منع النصارى من زيارة المقدسات','استسلام صلاح الدين'], answer:0, explanation:'وتبقى القدس وعسقلان بأيدي المسلمين مع السماح بالزيارة.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'القانون الذي طبقه الفرنجة وجعل من يضع سيفه أو علامة على منزل مالكاً له يسمى:', options:['قانون الحرب العادلة','قانون الفتح','قانون الحصار','قانون الإقطاع'], answer:1, explanation:'ورد هذا بالنص تحت سياسات الفرنجة.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'آخر معاقل الفرنجة في فلسطين التي استعادها الأشرف خليل سنة 1291م هي:', options:['عكا','الرها','بيت المقدس','دمياط'], answer:0, explanation:'وبذلك انتهى الوجود الفرنجي في فلسطين.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'الحملة السادسة أسفرت عن:', options:['صلح الرملة','اتفاقية يافا عام 1229م','سقوط الرها','فتح القدس بالقوة'], answer:1, explanation:'كانت بين الملك الكامل وفردريك.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'استهدفت الحملة الخامسة:', options:['القسطنطينية','تونس','مصر','الأندلس'], answer:2, explanation:'هاجمت دمياط ثم اتجهت نحو القاهرة.'},
+  {lesson:'الحروب الفرنجية', type:'mcq', q:'على الصعيد الديني، خرجت الكنيسة الغربية من الحروب الفرنجية:', options:['أقوى من قبل بكثير','أكثر ضعفاً مما كانت عليه قبل الحروب','مهيمنة على الشرق','موحدة مع الكنيسة الشرقية'], answer:1, explanation:'فشلت أهدافها وخرجت أكثر ضعفاً.'},
+
+  // الدرس الرابع
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'الحرب العالمية الأولى هي:', options:['نزاع محلي دام سنة واحدة','نزاع دولي وصراع دموي استمر أربعة أعوام وشمل معظم أنحاء العالم','حرب بين روسيا وألمانيا فقط','حرب بحرية فقط'], answer:1, explanation:'هذا تعريف الحرب العالمية الأولى في الكتاب.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'امتدت الحرب العالمية الأولى بين عامي:', options:['1914-1918م','1939-1945م','1905-1910م','1917-1922م'], answer:0, explanation:'بدأت 1914م وانتهت 1918م.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'أيّ الدول شكلت دول الوسط في الحرب العالمية الأولى؟', options:['ألمانيا وفرنسا والنمسا','ألمانيا والدولة العثمانية والنمسا','روسيا وبريطانيا وفرنسا','ألمانيا وفرنسا وبلجيكا'], answer:1, explanation:'هذا السؤال ورد نصاً في التقويم.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'من أسباب الحرب العالمية الأولى:', options:['التنافس الاستعماري وسباق التسلح والتحالفات','اختراع الطباعة','اكتشاف أمريكا','الثورة الزراعية فقط'], answer:0, explanation:'هذه من أبرز الأسباب غير المباشرة.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'السبب المباشر لاندلاع الحرب العالمية الأولى هو:', options:['الأزمة الاقتصادية الكبرى','اغتيال ولي عهد النمسا فرانتس فرديناند في سراييفو','احتلال اليابان لمنشوريا','دخول الولايات المتحدة الحرب'], answer:1, explanation:'هذا هو السبب المباشر كما ورد في النص.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'دخلت روسيا الحرب إلى جانب الصرب بذريعة:', options:['حماية مصالحها في البلقان','استعادة المستعمرات الإفريقية','الدفاع عن بلجيكا','السيطرة على قناة السويس'], answer:0, explanation:'هذا ما ذكره نص اندلاع الحرب.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'دخلت بريطانيا الحرب بحجة:', options:['الدفاع عن بلجيكا','تحرير القدس','الدفاع عن روسيا','احتلال برلين'], answer:0, explanation:'بعد اجتياز ألمانيا بلجيكا.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'تميزت المرحلة الأولى من الحرب العالمية الأولى بـ:', options:['الأسلحة النووية','حرب الخنادق','الهدنة الشاملة','خروج ألمانيا المبكر'], answer:1, explanation:'حرب الخنادق أبرز سمات المرحلة الأولى.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'أي سلاح استُخدم لأول مرة في حرب السوم عام 1916م؟', options:['الغواصات','الصواريخ','الدبابات','الطائرات النفاثة'], answer:2, explanation:'استُخدمت الدبابة لأول مرة على يد البريطانيين.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'المعاهدة التي وقعتها روسيا مع ألمانيا خلال الحرب العالمية الأولى هي:', options:['لوزان','فرساي','برست ليتوفسك','مدروس'], answer:2, explanation:'وقعت بعد الثورة البلشفية وخروج روسيا من الحرب.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'الدولة التي أدى دخولها الحرب سنة 1917م إلى تغيير موازين القوى لصالح الحلفاء هي:', options:['إيطاليا','الولايات المتحدة الأمريكية','الصين','بلجيكا'], answer:1, explanation:'هذا ما أكدته المرحلة الثانية من الحرب.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'من نتائج الحرب العالمية الأولى:', options:['إنشاء هيئة الأمم المتحدة','انهيار الإمبراطوريات العثمانية والروسية والنمساوية','انتهاء الاستعمار في آسيا فوراً','تقسيم ألمانيا إلى شرقية وغربية'], answer:1, explanation:'هذه من أبرز النتائج، أما هيئة الأمم المتحدة فبعد الحرب الثانية.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'معاهدة فرساي عام 1919م نصت على:', options:['إعادة الألزاس واللورين إلى فرنسا','تقسيم فلسطين','إنشاء حلف وارسو','استسلام اليابان'], answer:0, explanation:'هذا بند مشهور في المعاهدة.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'المعاهدة التي أجبرت الدولة العثمانية على التنازل عن ممتلكاتها في المشرق العربي هي:', options:['سيفر','لوزان','فرساي','بريست ليتوفسك'], answer:0, explanation:'أُجبرت الدولة العثمانية على توقيع سيفر سنة 1920م.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'من أبرز المؤامرات على الوطن العربي خلال الحرب العالمية الأولى:', options:['سايكس بيكو ووعد بلفور','حلف وارسو والناتو','بلاط الشهداء وصلح الرملة','دانزج والممر البولندي'], answer:0, explanation:'وردت هذه المؤامرات صراحة في الدرس.'},
+  {lesson:'الحرب العالمية الأولى', type:'mcq', q:'وعد بلفور صدر بتاريخ:', options:['1916/11/2','1917/11/2','1918/11/2','1920/11/2'], answer:1, explanation:'التاريخ الوارد في النص هو 2/11/1917.'},
+
+  // الدرس الخامس
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'الحرب العالمية الثانية بدأت في:', options:['1918م','1939م','1941م','1945م'], answer:1, explanation:'بدأت في الأول من أيلول 1939م.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'انتهت الحرب العالمية الثانية عندما استسلمت:', options:['ألمانيا','إيطاليا','اليابان','رومانيا'], answer:2, explanation:'انتهت في 2 أيلول 1945م باستسلام اليابان.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'أيّ الدول الآتية شكلت دول الحلفاء في الحرب العالمية الثانية؟', options:['فرنسا وبريطانيا والولايات المتحدة الأمريكية','فرنسا وبريطانيا وإيطاليا','إيطاليا وألمانيا واليابان','ألمانيا والنمسا وروسيا'], answer:0, explanation:'هذا كما ورد في التقويم.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'أيّ الدول الآتية شكلت دول المحور؟', options:['ألمانيا واليابان وإيطاليا','فرنسا وبريطانيا وروسيا','أمريكا وفرنسا وبريطانيا','ألمانيا والنمسا وروسيا'], answer:0, explanation:'محور الحرب الثانية هو ألمانيا واليابان وإيطاليا.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'من الأسباب غير المباشرة للحرب العالمية الثانية:', options:['معاهدة فرساي والكساد العظيم وصعود الأنظمة الدكتاتورية','اغتيال ولي عهد النمسا','معركة حطين','وعد بلفور'], answer:0, explanation:'هذه أبرز العوامل المذكورة.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'السبب المباشر لاندلاع الحرب العالمية الثانية هو:', options:['مشكلة ميناء دانزج والممر البولندي واجتياح بولندا','قصف بيرل هاربر','الثورة البلشفية','معاهدة سيفر'], answer:0, explanation:'اجتياح بولندا في 1/9/1939م فجّر الحرب.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'أعاد هتلر تسليح ألمانيا سنة:', options:['1931م','1935م','1939م','1941م'], answer:1, explanation:'أصدر قراراً بإعادة التسليح والخدمة العسكرية سنة 1935م.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'الكساد العظيم بلغت ذروته عام:', options:['1929م','1932م','1935م','1939م'], answer:1, explanation:'ورد في الدرس أنه بلغ ذروته عام 1932م.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'المرحلة الأولى من الحرب العالمية الثانية (1939-1941م) تميزت بـ:', options:['انتصار دول الحلفاء منذ البداية','انتصار دول المحور واحتلالها عدة دول أوروبية','استسلام اليابان','تقسيم ألمانيا'], answer:1, explanation:'شهدت هذه المرحلة انتصار دول المحور.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'من قائد قوات المحور في معركة العلمين؟', options:['مونتجمري','رومل','هتلر','موسوليني'], answer:1, explanation:'هذا ورد نصاً في التقويم.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'الحدث الذي أدى إلى دخول الولايات المتحدة الحرب هو:', options:['اجتياح بولندا','قصف بيرل هاربر','سقوط باريس','معركة دانزج'], answer:1, explanation:'دخلت بعد قصف اليابان لقاعدة بيرل هاربر.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'المعركة التي هُزمت فيها ألمانيا عند محاولتها التقدم باتجاه روسيا هي:', options:['العلمين','ستالينجراد','السوم','الفردان'], answer:1, explanation:'ستالينجراد من محطات التحول لصالح الحلفاء.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'قامت الولايات المتحدة بقصف هيروشيما ونجازاكي بقنبلتين:', options:['كيماويتين','تقليديتين','ذريتين','فراغيتين'], answer:2, explanation:'هذا ما دفع اليابان إلى الاستسلام.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'من نتائج الحرب العالمية الثانية على الصعيد الدولي:', options:['إنشاء هيئة الأمم المتحدة عام 1945م','إنشاء عصبة الأمم','معاهدة سيفر','وعد بلفور'], answer:0, explanation:'أُنشئت هيئة الأمم المتحدة بعد الحرب الثانية.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'عام 1949م ظهرت في ألمانيا دولتان هما:', options:['شمالية وجنوبية','شرقية وغربية','ملكية وجمهورية','اتحادية ومحايدة'], answer:1, explanation:'ألمانيا الشرقية وألمانيا الغربية.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'أصبح العالم بعد الحرب العالمية الثانية:', options:['أحادياً بقيادة فرنسا','ثنائياً بقيادة الولايات المتحدة والاتحاد السوفييتي','بلا أقطاب','بقيادة ألمانيا واليابان'], answer:1, explanation:'خرجت القوتان الأعظم هما الولايات المتحدة والاتحاد السوفييتي.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'على الوطن العربي، أدت الحرب العالمية الثانية إلى:', options:['انتهاء القضية الفلسطينية','زيادة نشاط حركات التحرر ضد الاستعمار','إلغاء الانتداب مباشرة دون نضال','قيام الوحدة العربية فوراً'], answer:1, explanation:'الرقابة والأحكام العرفية زادت نشاط حركات التحرر.'},
+  {lesson:'الحرب العالمية الثانية', type:'mcq', q:'قرار هيئة الأمم المتحدة رقم 181 عام 1947م قضى بـ:', options:['تقسيم فلسطين إلى دولتين عربية ويهودية','إنشاء جامعة الدول العربية','إنهاء الانتداب البريطاني على الهند','تقسيم ألمانيا إلى أربع مناطق'], answer:0, explanation:'هذا من أبرز آثار الحرب على فلسطين.'}
+];
+
+const tfBank = [
+  {lesson:'الحروب: دوافعها وأنواعها', type:'tf', q:'من مبادئ القانون الإنساني الدولي مبدأ الإنسانية، والتمييز، والتناسب، والضرورة العسكرية.', answer:true, explanation:'هذه المبادئ الأربعة وردت بالنص.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'tf', q:'الحرب الباردة تقوم على الصدام العسكري المباشر بين الجيوش فقط.', answer:false, explanation:'الحرب الباردة صراع بوسائل كثيرة دون صدام عسكري مباشر.'},
+  {lesson:'الحروب: دوافعها وأنواعها', type:'tf', q:'حرب العصابات تلجأ إليها القوى الصغيرة أو الضعيفة العدد والعتاد.', answer:true, explanation:'هذا من سماتها الأساسية.'},
+  {lesson:'الفتوحات الإسلامية', type:'tf', q:'المعركة الحاسمة في فتوحات فارس كانت معركة اليرموك.', answer:false, explanation:'المعركة الحاسمة في فتوحات فارس هي نهاوند، أما اليرموك ففي الشام.'},
+  {lesson:'الفتوحات الإسلامية', type:'tf', q:'أسس عقبة بن نافع مدينة القيروان لتكون مركزاً لانطلاق الجيوش الإسلامية.', answer:true, explanation:'هذا نص صريح في الدرس.'},
+  {lesson:'الفتوحات الإسلامية', type:'tf', q:'معركة بلاط الشهداء فتحت الطريق أمام المسلمين لاجتياز أوروبا حتى القسطنطينية.', answer:false, explanation:'بل أوقفت الفتوحات في أوروبا وقلصت النفوذ الإسلامي في شمال إسبانيا.'},
+  {lesson:'الحروب الفرنجية', type:'tf', q:'احتل الفرنجة القدس سنة 1099م.', answer:true, explanation:'ورد ذلك في التقويم والنص.'},
+  {lesson:'الحروب الفرنجية', type:'tf', q:'كان تعامل المسلمين مع الفرنجة قائماً دائماً على قتل الأسرى دون استثناء.', answer:false, explanation:'الكتاب يبرز نموذجاً مغايراً؛ فلم يقتلوا الأسرى إلا من خان العهود والاتفاقيات.'},
+  {lesson:'الحروب الفرنجية', type:'tf', q:'صلح الرملة أنهى الحملة الفرنجية الثالثة.', answer:true, explanation:'تم سنة 1192م.'},
+  {lesson:'الحرب العالمية الأولى', type:'tf', q:'استُخدمت الدبابات لأول مرة في حرب السوم عام 1916م.', answer:true, explanation:'هذا من أشهر أحداث الحرب الأولى.'},
+  {lesson:'الحرب العالمية الأولى', type:'tf', q:'أُنشئت هيئة الأمم المتحدة عقب الحرب العالمية الأولى.', answer:false, explanation:'الذي نشأ بعد الحرب الأولى هو عصبة الأمم، أما الأمم المتحدة فبعد الحرب الثانية.'},
+  {lesson:'الحرب العالمية الأولى', type:'tf', q:'كان وعد بلفور عام 1917م من المؤامرات التي تعرض لها الوطن العربي.', answer:true, explanation:'وعد بلفور من أبرز نتائج الحرب على فلسطين.'},
+  {lesson:'الحرب العالمية الثانية', type:'tf', q:'دخلت الولايات المتحدة الحرب العالمية الثانية بعد قصف اليابان لقاعدة بيرل هاربر.', answer:true, explanation:'هذا الحدث غيّر مسار الحرب.'},
+  {lesson:'الحرب العالمية الثانية', type:'tf', q:'انتهت الحرب العالمية الثانية باستسلام ألمانيا سنة 1945م.', answer:false, explanation:'انتهت باستسلام اليابان في 2 أيلول 1945م، رغم استسلام ألمانيا قبلها.'},
+  {lesson:'الحرب العالمية الثانية', type:'tf', q:'قرار 181 الصادر عام 1947م قضى بتقسيم فلسطين إلى دولتين عربية ويهودية.', answer:true, explanation:'هذا ما نص عليه القرار.'}
+];
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function pickRandom(arr, n){ return shuffle(arr).slice(0,n); }
+
+function shuffleQuestionOptions(q){
+  if(q.type !== 'mcq') return {...q};
+  const pairs = q.options.map((text, idx)=>({text, correct: idx===q.answer}));
+  const shuffled = shuffle(pairs);
+  return {
+    ...q,
+    options: shuffled.map(x=>x.text),
+    answer: shuffled.findIndex(x=>x.correct)
+  };
+}
+
+let currentQuestions = [];
+let state = {answered:0, correct:0, byId:{}};
+
+function buildExam(){
+  state = {answered:0, correct:0, byId:{}};
+  document.getElementById('result').className = 'result';
+  document.getElementById('result').innerHTML = '';
+  const pickedMcq = pickRandom(mcqBank,35).map(shuffleQuestionOptions);
+  const pickedTf = pickRandom(tfBank,5);
+  currentQuestions = shuffle([...pickedMcq, ...pickedTf]).map((q,idx)=>({...q, id: idx+1}));
+  render();
+  updateCounters();
+}
+
+function render(){
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+
+  currentQuestions.forEach((q, idx)=>{
+    const el = document.createElement('section');
+    el.className = 'question';
+    const options = q.type === 'mcq'
+      ? q.options.map((op,i)=>`<label class="option" data-q="${idx}" data-i="${i}"><input type="radio" name="q${idx}" value="${i}"><span>${op}</span></label>`).join('')
+      : [
+          `<label class="option" data-q="${idx}" data-i="0"><input type="radio" name="q${idx}" value="0"><span>صح</span></label>`,
+          `<label class="option" data-q="${idx}" data-i="1"><input type="radio" name="q${idx}" value="1"><span>خطأ</span></label>`
+        ].join('');
+
+    el.innerHTML = `
+      <div class="qhead">
+        <div style="display:flex;gap:12px;align-items:flex-start;flex:1;">
+          <div class="qnum">${idx+1}</div>
+          <div style="flex:1;">
+            <p class="qtext">${q.q}</p>
+            <div class="meta">
+              <span class="tag">${q.lesson}</span>
+              <span class="tag">${q.type === 'mcq' ? 'اختيار متعدد' : 'صح / خطأ'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="options">${options}</div>
+      <div class="feedback" id="fb${idx}"></div>
+    `;
+    quiz.appendChild(el);
+  });
+
+  quiz.querySelectorAll('.option').forEach(opt=>{
+    opt.addEventListener('click', ()=> handleAnswer(Number(opt.dataset.q), Number(opt.dataset.i)));
+  });
+}
+
+function getCorrectValue(q){
+  if(q.type === 'mcq') return q.answer;
+  return q.answer ? 0 : 1; // صح = 0، خطأ = 1
+}
+
+function handleAnswer(qIndex, selected){
+  const q = currentQuestions[qIndex];
+  const correctVal = getCorrectValue(q);
+  const prev = state.byId[qIndex];
+  const isCorrect = selected === correctVal;
+
+  if(prev !== undefined){
+    if(prev === true && !isCorrect) state.correct--;
+    if(prev === false && isCorrect) state.correct++;
+  } else {
+    state.answered++;
+    if(isCorrect) state.correct++;
+  }
+  state.byId[qIndex] = isCorrect;
+
+  const container = document.querySelectorAll('.question')[qIndex];
+  const opts = container.querySelectorAll('.option');
+  opts.forEach((o, idx)=>{
+    o.classList.remove('correct','wrong');
+    const input = o.querySelector('input');
+    input.checked = idx === selected;
+    if(idx === correctVal) o.classList.add('correct');
+    else if(idx === selected && idx !== correctVal) o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById(`fb${qIndex}`);
+  fb.className = 'feedback ' + (isCorrect ? 'good' : 'bad');
+  const correctText = q.type === 'mcq' ? q.options[correctVal] : (q.answer ? 'صح' : 'خطأ');
+  fb.innerHTML = isCorrect
+    ? `إجابة صحيحة ✅<br>${q.explanation}`
+    : `إجابة غير صحيحة ❌<br><strong>الإجابة الصحيحة:</strong> ${correctText}<br>${q.explanation}`;
+
+  updateCounters();
+}
+
+function updateCounters(){
+  document.getElementById('answered').textContent = state.answered;
+  document.getElementById('correctCount').textContent = state.correct;
+}
+
+function gradeText(score){
+  if(score >= 36) return 'ممتاز';
+  if(score >= 32) return 'جيد جداً';
+  if(score >= 28) return 'جيد';
+  if(score >= 24) return 'مقبول';
+  return 'يحتاج مراجعة';
+}
+
+function finishExam(){
+  const total = currentQuestions.length;
+  const score = state.correct;
+  const wrong = total - score;
+  const percent = Math.round((score/total)*100);
+  const result = document.getElementById('result');
+  result.className = 'result show';
+  result.innerHTML = `
+    <div class="small">النتيجة النهائية</div>
+    <div class="big">${score} / ${total}</div>
+    <div class="sub">النسبة: <strong>${percent}%</strong> — التقدير: <strong>${gradeText(score)}</strong></div>
+    <div class="grid" style="margin-top:14px;">
+      <div class="pill">الصحيحة: ${score}</div>
+      <div class="pill">الخاطئة: ${wrong}</div>
+      <div class="pill">المجاب عنها: ${state.answered} / ${total}</div>
+      <div class="pill">النمط: وزاري/مراجعة شاملة</div>
+    </div>
+    <div class="note">ملاحظة: إذا أردت مجموعة جديدة بالكامل، اضغط «اختبار جديد» أو أعد فتح الملف من جديد، وستتغيّر الأسئلة المختارة وترتيبها.</div>
+  `;
+  result.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+document.getElementById('finishBtn').addEventListener('click', finishExam);
+document.getElementById('newExamBtn').addEventListener('click', buildExam);
+
+buildExam();
+</script>
+</body>
+</html>
